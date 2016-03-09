@@ -1,0 +1,1 @@
+Program would access the folder and rename all files inside that folder.
