@@ -8,5 +8,8 @@ current_working_dir = os.getcwd()
 os.chdir("/Users/asee2278/gitRepo/petProjects/python_mini_projects/Bulk_rename/prank")
 for file in list_of_files :
     new_name = file.translate(None,"0123456789")
-    os.renames(file,new_name)
+    try :
+        os.renames(file,new_name)
+    except :
+        print "cannot rename this file :-( "
     print new_name
