@@ -1,0 +1,1 @@
+Program accepts the city / location and returns the google map api coordinates in json format
