@@ -9,10 +9,13 @@ def getLocation(inputString):
     url = (googleApi)
     response , content = httplib2.Http().request(url,"GET")
     print content
-    #result = json.load(content)
-    #print result
-    print response
+    h = httplib2.Http()
+    result = json.loads(h.request(url,'GET')[1])
+    latitude = result['results'][0]['geometry']['location']['lat']
+    longitude = result['results'][0]['geometry']['location']['lng']
+    return (latitude,longitude)
 
 
-getLocation("pune India")
+loc = raw_input("Enter the location you want coordinate for eg. pune, India")
+print "Cooridnate of your location {} are  ".format(loc) + str(getLocation(loc))
 
