@@ -1,0 +1,1 @@
+Program would draw animated circular diagram with square  using python GUI
