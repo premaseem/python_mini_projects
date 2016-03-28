@@ -3,6 +3,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import Base, Puppy
 
+from pymongo import MongoClient
+
 
 engine = create_engine('sqlite:///puppies.db')
 Base.metadata.bind = engine
@@ -10,7 +12,24 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
-app = Flask(__name__) 
+app = Flask(__name__)
+
+client = MongoClient()
+db = client.test
+
+@app.route("/")
+@app.route("/things")
+@app.route("/dicks")
+def getThing() :
+  cursor = db.things.find()
+  data = []
+  dict = {}
+  for document in cursor:
+    data.append(document)
+  dict['data'] = data
+  return dict
+
+
 
 # Create the appropriate app.route functions, 
 #test and see if they work
