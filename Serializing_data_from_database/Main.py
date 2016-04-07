@@ -18,9 +18,9 @@ client = MongoClient()
 db = client.test
 
 @app.route("/")
-@app.route("/things")
+@app.route("/things",methods= ['GET'])
 @app.route("/dicks")
-def getThing() :
+def getThings() :
   cursor = db.things.find()
   data = []
   dict = {}
@@ -104,4 +104,4 @@ def deletePuppy(id):
 
 if __name__ == '__main__':
     app.debug = False
-    app.run(host='0.0.0.0', port=5000)	
+    app.run(host='localhost', port=5000)
