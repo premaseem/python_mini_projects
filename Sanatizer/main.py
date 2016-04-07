@@ -11,6 +11,17 @@ from flask import request
 from pymongo import MongoClient
 
 
+import pymongo
+
+# Connection to Mongo DB
+try:
+    conn=pymongo.MongoClient()
+    print "Connected successfully!!!"
+except pymongo.errors.ConnectionFailure, e:
+   print "Could not connect to MongoDB: %s" % e
+conn
+
+db = conn.get_database('test')
 
 fileString = """ This is line with adminPassword
 This is line with password
