@@ -9,19 +9,15 @@ import re
 from flask import make_response
 from flask import request
 from pymongo import MongoClient
+from bson import json_util, ObjectId
 
 
 import pymongo
 
 # Connection to Mongo DB
-try:
-    conn=pymongo.MongoClient()
-    print "Connected successfully!!!"
-except pymongo.errors.ConnectionFailure, e:
-   print "Could not connect to MongoDB: %s" % e
-conn
 
-db = conn.get_database('test')
+coll = pymongo.MongoClient().get_database('test').rules
+
 
 fileString = """ This is line with adminPassword
 This is line with password
@@ -69,10 +65,28 @@ app = Flask(__name__)
 
 from flask import abort
 
+try:
+    conn=pymongo.MongoClient()
+    print "Connected successfully!!!"
+except pymongo.errors.ConnectionFailure, e:
+   print "Could not connect to MongoDB: %s" % e
+conn
+
+coll = conn.get_database('test').rules
+#coll = testdb.get_collection()
+#bar = coll.insert_one({'name':'prem'})
+recs =  coll.find()
+
 # return all rules
+import json
 @app.route('/rules', methods=['GET'])
 def get_tasks():
-    return jsonify({'rules': rules})
+    rulesM = coll.find({},{"_id":0})
+    res = []
+    for rule in rulesM :
+        print rule
+        res.append(rule)
+    return jsonify({'rules': res})
 
 # return specific rule
 @app.route('/rules/<int:rule_id>', methods=['GET'])
@@ -80,6 +94,7 @@ def get_task(rule_id):
     rule = [rule for rule in rules if rule['rule_id'] == rule_id]
     if len(rule) == 0:
         abort(404)
+
     return jsonify({'rule': rule[0]})
 
 
@@ -102,7 +117,10 @@ def add_rule():
     'find' : request.json['find'],
     'replaceWith': request.json['replaceWith']
     }
-    rules.append(rule)
+
+    m_id = coll.insert_one(request.json)
+    print "Insert successful and mongo id is "  + str(m_id)
+    #rules.append(rule)
     return jsonify({'rule':rule }),201
 
 
