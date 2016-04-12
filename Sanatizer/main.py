@@ -73,9 +73,6 @@ except pymongo.errors.ConnectionFailure, e:
 conn
 
 coll = conn.get_database('test').rules
-#coll = testdb.get_collection()
-#bar = coll.insert_one({'name':'prem'})
-recs =  coll.find()
 
 # return all rules
 import json
@@ -91,37 +88,36 @@ def get_tasks():
 # return specific rule
 @app.route('/rules/<int:rule_id>', methods=['GET'])
 def get_task(rule_id):
-    rule = [rule for rule in rules if rule['rule_id'] == rule_id]
-    if len(rule) == 0:
+    # rule = [rule for rule in rules if rule['rule_id'] == rule_id]
+    rule = coll.find_one({"rule_id": rule_id},{"_id":0})
+    if rule is None or len(rule) == 0:
         abort(404)
 
-    return jsonify({'rule': rule[0]})
+    return jsonify({'rule': rule})
 
 
 @app.route('/rules/<int:rule_id>', methods=['DELETE'])
 def delete_task(rule_id):
-    rule = [rule for rule in rules if rule['rule_id'] == rule_id]
-    if len(rule) == 0:
-        abort(404)
-    rules.remove(rule[0])
-    return jsonify({"result":True})
-
+    result = coll.remove({"rule_id":rule_id})
+    if result is not None :
+        return jsonify({"result":True})
+    return jsonify({"result":False})
 
 
 @app.route('/rules/add', methods=['POST'])
 def add_rule():
     if not request.json or not 'find' in request.json:
         abort(400)
-    rule = {
-    'rule_id': rules[-1]['rule_id'] + 1,
-    'find' : request.json['find'],
-    'replaceWith': request.json['replaceWith']
-    }
-
-    m_id = coll.insert_one(request.json)
+    jsonM = request.json
+    #rec = coll.find().max({"rule_id":1})
+    rec = {"rule_id":69}
+    new_id = rec["rule_id"] + 1
+    jsonM["rule_id"] = new_id
+    m_id = coll.insert_one(jsonM)
     print "Insert successful and mongo id is "  + str(m_id)
     #rules.append(rule)
-    return jsonify({'rule':rule }),201
+    jsonM.pop("_id")
+    return jsonify({'rule':jsonM }),201
 
 
 @app.route('/rules/<int:rule_id>', methods=['PUT'])
