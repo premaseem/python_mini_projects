@@ -123,19 +123,11 @@ def add_rule():
 
 @app.route('/rules/<int:rule_id>', methods=['PUT'])
 def update_rule(rule_id):
-    ruleList = [rule for rule in rules if rule['rule_id'] == rule_id]
-    if len(ruleList) == 0:
-            abort(404)
-    if len(ruleList) ==0 :
-        abort(404)
-    rule_to_update = ruleList[0]
-
-    rule_to_update['find'] = request.json['find']
-    rule_to_update['replaceWith'] = request.json['replaceWith']
-
-
-    rules.append(rule)
-    return jsonify({'rule':rule_to_update }),201
+    rule_to_update = coll.update({"rule_id":rule_id},request.json,False)
+    result = True
+    if rule_to_update["nModified"] == 0 :
+        result=False
+    return jsonify({'updated':result }),201
 
 @app.route('/rules/<int:rule_id>', methods=['PATCH'])
 def update_rule1(rule_id):
