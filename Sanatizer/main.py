@@ -131,6 +131,20 @@ def update_rule(rule_id):
 
 @app.route('/rules/<int:rule_id>', methods=['PATCH'])
 def update_rule1(rule_id):
+    rec = coll.find_one({"rule_id":rule_id})
+    if rec is None :
+        abort(404)
+    for key in request.json.keys() :
+        rec[key] = request.json[key]
+    result = coll.update({"rule_id":rule_id},rec,False)
+    print result
+    return jsonify({"update":"success"})
+
+
+
+
+@app.route('/rules/<int:rule_id>', methods=['PATCH'])
+def update_rule2(rule_id):
     ruleList = [rule for rule in rules if rule['rule_id'] == rule_id]
     if len(ruleList) == 0:
             abort(404)
@@ -145,6 +159,7 @@ def update_rule1(rule_id):
             continue
         rule_to_update[key] = request.json[key]
     return jsonify({'rule':rule_to_update }),201
+
 
 @app.errorhandler(404)
 def not_found(error):
