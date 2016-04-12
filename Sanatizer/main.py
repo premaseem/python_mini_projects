@@ -109,9 +109,10 @@ def add_rule():
     if not request.json or not 'find' in request.json:
         abort(400)
     jsonM = request.json
-    #rec = coll.find().max({"rule_id":1})
-    rec = {"rule_id":69}
-    new_id = rec["rule_id"] + 1
+    l=[]
+    l = coll.find().sort("rule_id",pymongo.DESCENDING)
+    #rec = {"rule_id":69}
+    new_id = l[0]["rule_id"] + 1
     jsonM["rule_id"] = new_id
     m_id = coll.insert_one(jsonM)
     print "Insert successful and mongo id is "  + str(m_id)
