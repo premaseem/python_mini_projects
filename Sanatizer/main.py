@@ -129,6 +129,7 @@ def update_rule(rule_id):
         result=False
     return jsonify({'updated':result }),201
 
+
 @app.route('/rules/<int:rule_id>', methods=['PATCH'])
 def update_rule1(rule_id):
     rec = coll.find_one({"rule_id":rule_id})
