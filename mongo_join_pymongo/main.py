@@ -26,14 +26,15 @@ db.employeeSalary.insert(bulk_salary_insert)
 print str(db.employee.count()) + str("total employee")
 print str(db.employeeSalary.count()) + str("total salary")
 
-def find_employee() :
+def find_employee():
     emp_obj = db.employee.find_one({"eid":1})
     print emp_obj
 
-def find_employee_with_join(eid) :
+def find_employee_with_joined_salary(eid) :
     emp_obj = db.employee.find_one({"eid":eid})
     emp_sal_obj = db.employeeSalary.find_one({"eid":eid})
     emp_obj["salary"] = emp_sal_obj["salary"]
+    del emp_obj["_id"]
     print emp_obj
 
-find_employee_with_join(2)
+find_employee_with_joined_salary(2)
